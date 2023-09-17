@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <style>
+    body {
+      background-color: lightskyblue;
+    }
+
+    .container {
+      background-color: azure;
+      margin: 100px auto 100px auto;
+      padding: 50px 0 50px 0;
+    }
+
+    h1, .row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .row div {
+      height: 50px;
+      width: 50px;
+      background-color: lightgreen;
+      border: 1px solid;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Helvetica;
+      font-size: 40px;
+    }
+
+    .row div:hover {
+      background-color: rgb(82, 230, 82);
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tic-Tac-Toe</h1>
+    <div class="row">
+      <div class="field-0-0" onclick="
+        playGame(0, 0);
+      "></div>
+      <div class="field-0-1" onclick="
+        playGame(0, 1);
+      "></div>
+      <div class="field-0-2" onclick="
+        playGame(0, 2);
+      "></div>
+    </div>
+    <div class="row">
+      <div class="field-1-0" onclick="
+        playGame(1, 0);
+      "></div>
+      <div class="field-1-1" onclick="
+        playGame(1, 1);
+      "></div>
+      <div class="field-1-2" onclick="
+        playGame(1, 2);
+      "></div>
+      
+    </div>
+    <div class="row">
+      <div class="field-2-0"  onclick="
+        playGame(2, 0);
+      "></div>
+      <div class="field-2-1" onclick="
+        playGame(2, 1);
+      "></div>
+      <div class="field-2-2"  onclick="
+        playGame(2, 2);
+      "></div>
+
+      
+    </div>
+  </div>
+
+  <script>       
+    const playerToken = 'X';
+    const computerToken = '0';
+    let isPlaying = false;
+
+    let playField = [
+      ['', '', ''],
+      ['', '', ''],
+      ['', '', '']
+    ];
+
+    function playGame(row, field) {
+      if(isPlaying === false) {
+        isPlaying = true;
+
+        if(selectPlayerMove(row,field)) {
+          if (checkForWin(playerToken)) {
+            console.log('You win');
+            return
+          }
+
+          setTimeout(() => {
+            if(selectComputerMove()) {
+              if (checkForWin(computerToken)) {
+                console.log('The computer wins!')
+                // not reseting isPlaying (to true) means that the game cannot be played when a win is reached
+                return
+              }
+              // as isPlaying is not reset until the selectionComputerMoves is executed, the game cannot be played before the computer selects its move
+              isPlaying = false;
+            }
+          }, 300);
+        }
+      }
+    }
+
+    function checkForWin(token) {
+      let win = false;
+      if ( 
+        //check for horizontal pattern
+        playField[0][0] === token && playField[0][1] === token && playField[0][2] === token ||
+        playField[1][0] === token && playField[1][1] === token && playField[1][2] === token ||
+        playField[2][0] === token && playField[2][1] === token && playField[2][2] === token ||
+        //check for vertical pattern
+        playField[0][0] === token && playField[1][0] === token && playField[2][0] === token ||
+        playField[0][1] === token && playField[1][1] === token && playField[2][1] === token ||
+        playField[0][2] === token && playField[1][2] === token && playField[2][2] === token ||
+        //check for diagonal pattern
+        playField[0][0] === token && playField[1][1] === token && playField[2][2] === token ||
+        playField[0][2] === token && playField[1][1] === token && playField[2][0] === token
+      ) {
+        win = true;
+      } else if(!checkForEmptyField()) {
+        console.log('Tie');
+      }
+      return win;
+    }
+
+    function selectPlayerMove(row, field) {
+      if (playField[`${row}`][`${field}`] === '') {
+        document.querySelector(`.field-${row}-${field}`).innerHTML = `${playerToken}`;
+        playField[`${row}`][`${field}`] = playerToken;
+        playerMoveSelected = true;
+        return true;
+      }
+    }
+
+    function selectComputerMove() {
+      let randomNumber = Math.random();
+
+      if (randomNumber >= 0 && randomNumber < 1 / 9) {
+        computerFieldSelection(0, 0);
+      } else if (randomNumber >= 1 / 9 && randomNumber < 2 / 9) {
+        computerFieldSelection(0, 1);
+      } else if (randomNumber >= 2 / 9 && randomNumber < 3 / 9) {
+        computerFieldSelection(0, 2);
+      } else if (randomNumber >= 3 / 9 && randomNumber < 4 / 9) {
+        computerFieldSelection(1, 0);
+      } else if (randomNumber >= 4 / 9 && randomNumber < 5 / 9) {
+        computerFieldSelection(1, 1);
+      } else if (randomNumber >= 5 / 9 && randomNumber < 6 / 9) {
+        computerFieldSelection(1, 2);
+      } else if (randomNumber >= 6 / 9 && randomNumber < 7 / 9) {
+        computerFieldSelection(2, 0);
+      } else if (randomNumber >= 7 / 9 && randomNumber < 8 / 9) {
+        computerFieldSelection(2, 1);
+      } else if (randomNumber >= 8 / 9 && randomNumber < 9 / 9) {
+        computerFieldSelection(2, 2);
+      }
+      return true;
+    }
+
+    function checkForEmptyField() {
+      let emptyField;
+
+      for (let i = 0; i < playField.length; i++) {
+        for (let i2 = 0; i2 < playField.length; i2++) {
+          if (playField[i][i2] === '') {
+            emptyField = true;
+          }
+        }
+      }
+      return emptyField;
+    }
+
+    function computerFieldSelection (row, field) {
+      if (playField[`${row}`][`${field}`] === '') {
+        document.querySelector(`.field-${row}-${field}`).innerHTML = `${computerToken}`;
+        playField[`${row}`][`${field}`] = computerToken;
+      } else if(checkForEmptyField()) {
+          selectComputerMove();
+      } 
+    }
+    
+  
+  </script>
+  
+</body>
+</html>
